@@ -1,0 +1,12 @@
+{
+    "version": "1.0.0",
+    "hook": {
+        "path": "/usr/local/bin/hook_tool",
+        "args": ["hook_tool"],
+        "env": ["ENABLE_GPU=1"]
+    },
+    "when": {
+         "always": true
+    },
+    "stages": ["prestart"]
+}

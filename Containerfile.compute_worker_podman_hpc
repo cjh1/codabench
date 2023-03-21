@@ -1,0 +1,18 @@
+FROM compute_worker_podman
+
+RUN dnf -y install git make
+
+RUN git clone -b hook-env https://github.com/cjh1/podman-hpc.git && \
+    cd podman-hpc && \
+    pip3 install . && \
+    python3 -m podman_hpc.configure_hooks 
+
+COPY podman/etc/podman_hpc /usr/etc/podman_hpc
+
+RUN chmod -R o+rx  /usr/etc/podman_hpc
+
+COPY podman/02-hook_tool.json /usr/share/containers/oci/hooks.d/02-hook_tool.json
+
+RUN chmod o+r /usr/share/containers/oci/hooks.d/02-hook_tool.json
+
+RUN dnf -y remove git make

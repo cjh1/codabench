@@ -1,0 +1,27 @@
+name: mpich
+cli_arg: mpi
+help: Enable Cray MPICH Support
+env: ENABLE_MPICH_SS
+shared_run: True
+additional_args:
+  - -e SLURM_*
+  - -e PALS_*
+  - -e PMI_*
+  - -e LD_LIBRARY_PATH=/opt/udiImage/modules/mpich:/opt/udiImage/modules/mpich/dep
+  - --ipc=host
+  - --network=host
+  - --pid=host
+  - --privileged
+copy:
+  - ../01-mpich.conf:/etc/ld.so.conf.d/02-mpich.conf
+bind:
+  - /dev/xpmem:/dev/xpmem
+  - /dev/shm:/dev/shm
+  - /dev/ss0:/dev/ss0
+  - /dev/cxi*:/dev/cxi*
+  - /usr/lib/shifter/mpich-2.2:/opt/udiImage/modules/mpich
+  - /opt/cray/libfabric/*/lib64/libfabric:/opt/cray/libfabric/*/lib64/libfabric
+  - /var/spool/slurmd:/var/spool/slurmd
+  - /run/munge:/run/munge
+  - /run/nscd:/run/nscd
+  - /etc/libibverbs.d:/etc/libibverbs.d
