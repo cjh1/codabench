@@ -88,6 +88,17 @@ elif os.environ.get("NVIDIA_DOCKER"):
 else:
     CONTAINER_ENGINE_EXECUTABLE = "docker"
 
+# Parse any extra run args we have been provided
+CONTAINER_ENGINE_RUN_EXTRA_ARGS = []
+if os.environ.get("CONTAINER_ENGINE_RUN_EXTRA_ARGS"):
+    try:
+        CONTAINER_ENGINE_RUN_EXTRA_ARGS = json.loads(os.environ.get("CONTAINER_ENGINE_RUN_EXTRA_ARGS"))
+        # Check if it's a list of strings
+        if not isinstance(CONTAINER_ENGINE_RUN_EXTRA_ARGS, list) or not all(isinstance(x, str) for x in CONTAINER_ENGINE_RUN_EXTRA_ARGS):
+            raise ValueError("CONTAINER_ENGINE_RUN_EXTRA_ARGS should be a JSON list of strings")
+    except  json.JSONDecodeError:
+        print("Error parsing CONTAINER_ENGINE_RUN_EXTRA_ARGS, it should be a JSON list of strings")
+        raise
 
 # -----------------------------------------------
 # Exceptions
@@ -618,10 +629,12 @@ class Run:
                     f"(may be meant to be consumed by an ingestion program)"
                 )
                 return
+        CONTAINER_ENGINE_RUN_EXTRA_ARGS
 
         engine_cmd = [
             CONTAINER_ENGINE_EXECUTABLE,
             'run',
+            *CONTAINER_ENGINE_RUN_EXTRA_ARGS,
             # Remove it after run
             '--rm',
             f'--name={self.ingestion_container_name if kind == "ingestion" else self.program_container_name}',
