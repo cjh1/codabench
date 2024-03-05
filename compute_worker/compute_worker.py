@@ -94,7 +94,7 @@ if os.environ.get("CONTAINER_ENGINE_RUN_EXTRA_ARGS"):
     try:
         CONTAINER_ENGINE_RUN_EXTRA_ARGS = json.loads(os.environ.get("CONTAINER_ENGINE_RUN_EXTRA_ARGS"))
         # Check if it's a list of strings
-        if not all(isinstance(x, str) for x in CONTAINER_ENGINE_RUN_EXTRA_ARGS):
+        if not isinstance(CONTAINER_ENGINE_RUN_EXTRA_ARGS, list) or not all(isinstance(x, str) for x in CONTAINER_ENGINE_RUN_EXTRA_ARGS):
             raise ValueError("CONTAINER_ENGINE_RUN_EXTRA_ARGS should be a JSON list of strings")
     except  json.JSONDecodeError:
         print("Error parsing CONTAINER_ENGINE_RUN_EXTRA_ARGS, it should be a JSON list of strings")
