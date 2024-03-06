@@ -2,7 +2,7 @@ FROM compute_worker_podman
 
 RUN dnf -y install git make
 
-RUN git clone -b hook-env https://github.com/cjh1/podman-hpc.git && \
+RUN git clone -b v1.1.0 https://github.com/NERSC/podman-hpc.git && \
     cd podman-hpc && \
     pip3 install . && \
     python3 -m podman_hpc.configure_hooks 
