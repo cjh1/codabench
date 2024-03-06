@@ -37,8 +37,8 @@ RUN sed -e 's|^#mount_program|mount_program|g' \
 VOLUME /home/worker/.local/share/containers
 
 # Create directory for tmp space
-RUN mkdir /codabench && \
-    chown worker:worker /codabench
+RUN mkdir -p /codabench/data && \
+    chown -R worker:worker /codabench
 
 # Set up podman registry for dockerhub
 RUN echo -e "[registries.search]\nregistries = ['docker.io']\n" > /etc/containers/registries.conf
