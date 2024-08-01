@@ -2,10 +2,13 @@ FROM compute_worker_podman
 
 RUN dnf -y install git make
 
+# Get pip for 3.9
+RUN python3.9 -m ensurepip --upgrade
+
 RUN git clone -b v1.1.0 https://github.com/NERSC/podman-hpc.git && \
     cd podman-hpc && \
     pip3 install . && \
-    python3 -m podman_hpc.configure_hooks 
+    python3 -m podman_hpc.configure_hooks
 
 COPY podman/etc/podman_hpc /usr/etc/podman_hpc
 
