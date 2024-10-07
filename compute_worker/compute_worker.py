@@ -644,7 +644,6 @@ class Run:
         engine_cmd = [
             CONTAINER_ENGINE_EXECUTABLE,
             'run',
-            *CONTAINER_ENGINE_RUN_EXTRA_ARGS,
             # Remove it after run
             '--rm',
             f'--name={self.ingestion_container_name if kind == "ingestion" else self.program_container_name}',
@@ -667,6 +666,8 @@ class Run:
         # GPU or not
         if os.environ.get("USE_GPU"):
             engine_cmd.extend(['--gpus', 'all'])
+
+        engine_cmd.extend(CONTAINER_ENGINE_RUN_EXTRA_ARGS)
 
         if kind == 'ingestion':
             # program here is either scoring program or submission, depends on if this ran during Prediction or Scoring
