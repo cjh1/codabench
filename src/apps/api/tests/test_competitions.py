@@ -4,13 +4,37 @@ import csv
 from zipfile import ZipFile
 from io import StringIO, BytesIO
 from unittest import mock
+from django.test import override_settings
 from django.urls import reverse
 from rest_framework.test import APITestCase
 
+from api.permissions import user_can_create_competition
 from api.serializers.competitions import CompetitionSerializer
 from competitions.models import CompetitionParticipant, Submission, Competition
 from factories import UserFactory, CompetitionFactory, CompetitionParticipantFactory, PhaseFactory, LeaderboardFactory, \
     ColumnFactory, SubmissionFactory, SubmissionScoreFactory, TaskFactory
+
+
+class CompetitionCreatePermissionTests(APITestCase):
+    @override_settings(COMPETITION_CREATION_ENABLED_BY_DEFAULT=True)
+    def test_defaults_to_global_setting_when_user_has_no_override(self):
+        user = UserFactory(can_create_competition=None)
+        assert user_can_create_competition(user) is True
+
+    @override_settings(COMPETITION_CREATION_ENABLED_BY_DEFAULT=False)
+    def test_denies_when_global_default_is_disabled_and_user_has_no_override(self):
+        user = UserFactory(can_create_competition=None)
+        assert user_can_create_competition(user) is False
+
+    @override_settings(COMPETITION_CREATION_ENABLED_BY_DEFAULT=False)
+    def test_user_override_can_enable_creation_even_when_global_default_is_disabled(self):
+        user = UserFactory(can_create_competition=True)
+        assert user_can_create_competition(user) is True
+
+    @override_settings(COMPETITION_CREATION_ENABLED_BY_DEFAULT=True)
+    def test_user_override_can_disable_creation_even_when_global_default_is_enabled(self):
+        user = UserFactory(can_create_competition=False)
+        assert user_can_create_competition(user) is False
 
 
 class CompetitionTests(APITestCase):
